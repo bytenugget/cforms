@@ -27,6 +27,7 @@ private:
 protected:
     
     virtual bool Init() override {
+        if (!cf::Drawable::Init()) return false; // create the render texture of the control
         m_transform.SetSize({20, 20});
         m_background = sf::Color(0x00FF00FF);
         m_speed = 200.0f;
