@@ -13,7 +13,7 @@
 
 namespace cf {
 
-/// Interface type for an object owner.
+/// Base type for an object owner.
 class ObjectOwner : public virtual Object {
 
 private:

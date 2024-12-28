@@ -86,7 +86,7 @@ protected:
     virtual void WindowEvent(sf::Event& window_event) {}
     
     /// Override this to update your form.
-    /// @param delta Excecution time of the previous cycle.
+    /// @param delta Execution time of the previous cycle.
     virtual void Update(const sf::Time& delta) {}
     
     /// Override this to draw your form
@@ -277,7 +277,7 @@ public:
     }
     
     Form(ObjectOwner* owner, const std::string& name) : ObjectOwner(owner, name) {
-        m_title = name;
+        m_title = m_name;
         m_size = sf::Vector2u(500U, 400U);
         m_style = 7U;
         m_framelimit = 60U;

@@ -45,10 +45,6 @@ public:
         return m_items.rend();
     }
     
-    auto operator[](size_t index) {
-        return m_items[index];
-    }
-    
     // Item at the specified index
     T* operator[](size_t index) const {
         if (index >= Count()) {

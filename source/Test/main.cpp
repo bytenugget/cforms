@@ -13,6 +13,7 @@ private:
 protected:
     
     virtual bool Init() override {
+        if (!cf::Drawable::Init()) return false;
         m_transform.SetSize({20, 20});
         m_background = sf::Color(0x00FF00FF);
         m_speed = 200.0f;
@@ -50,6 +51,7 @@ protected:
         m_size = sf::Vector2u({400, 400});
         for (int i=0; i < 13; i++) {
             TestControl* c = Create<TestControl>("TestControl" + std::to_string(i));
+            if (!c) return false;
             c->Transform()->SetPosition({10 + 30 * i, 10 + 30 * i});
         }
         

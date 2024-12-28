@@ -13,7 +13,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fdiagnostics-color=always")
 add_compile_options(-std=c++17 -Wall)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-option(TESTMAIN "Build Test: main" ON)
+option(TEST "Build test" ON)
 
 include(FetchContent)
 FetchContent_Declare(SFML
@@ -24,16 +24,10 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-#find_package(Boost)
-#if(Boost_FOUND)
-#    include_directories(${Boost_INCLUDE_DIRS}) 
-#    link_libraries(${Boost_LIBRARIES})
-#endif()
-
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 message(STATUS "Targets:")    
-if(TESTMAIN)
+if(TEST)
     message(STATUS "   test")
     file(GLOB_RECURSE test_source ${CMAKE_SOURCE_DIR}/source/Test/*.cpp ${CMAKE_SOURCE_DIR}/source/Test/*.hpp)
     add_executable(test ${test_source})

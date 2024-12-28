@@ -12,7 +12,7 @@ class Updatable : public virtual Object {
 protected:
     
     /// Override this to update your object.
-    /// @param delta Excecution time of the previous cycle.
+    /// @param delta Execution time of the previous cycle.
     virtual void Update(const sf::Time& delta) {}
     
 public:
