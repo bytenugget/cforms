@@ -87,11 +87,9 @@ int main() {
 - **cf::Control**: Base type for an updatable and drawable object, with child objects.
 
 #### Main overridable functions:
-- Init(): Customize the form/control and create child objects.
-- Update(): Perform per-frame changes to the form.
-- Draw(): Draw the form/control itself.
-- Create<>(): Instantiate a child object owned by the form/control. Objects must atleast be derived from type cf::Object.
-- Delete(): Destroy a previously created child object owned by the form/control.
+- **Init()**: Customize the form/control and create child objects.
+- **Update()**: Perform per-frame changes to the form.
+- **Draw()**: Draw the form/control itself.
 
 #### Other types:
 - **cf::Object**: Base type for an object owner managed object.
