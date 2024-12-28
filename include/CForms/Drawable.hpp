@@ -101,11 +101,6 @@ public:
         m_transform = cf::Transform({0, 0}, {60, 20});
         m_transform.__PositionChanged.Bind(&Drawable::__OnTransformPositionChanged, this);
         m_transform.__SizeChanged.Bind(&Drawable::__OnTransformSizeChanged, this);
-        if (!m_canvas.create(60, 20)) {
-            // ERROR Failed to create canvas
-            std::cerr << "[X] Drawable: Failed to create canvas\n";
-            return;
-        }
         m_dirty = true;
     }
     
