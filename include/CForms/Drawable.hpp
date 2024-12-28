@@ -54,7 +54,7 @@ protected:
     /// Override this to initialize your object.
     /// Call Drawable::Init() to create the object's render texture, if you override!
     virtual bool Init() override {
-        if (!m_canvas.create(60, 20)) {
+        if (!m_canvas.create(m_transform.Width(), m_transform.Height())) {
             // ERROR Failed to create canvas
             std::cerr << "[X] Drawable: Failed to create canvas\n";
             return false;
