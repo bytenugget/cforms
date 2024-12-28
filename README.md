@@ -1,6 +1,12 @@
 ## CForms
 Small UI framework which utilizes SFML 2.3 and is mainly, but not only, inspired by personal experience with Windows Forms.
 
+### Help!
+We are currently facing a severe issue, that prevents this project from being built with shared libraries. (See Issues)
+
+### Beware:
+This project is in a very very early stage, and is not fit for purpose yet!
+
 ### How to use:
 Create your own custom types derived from **cf::Form** and/or **cf::Control** and override the Init(), Update() and Draw() functions.
 
