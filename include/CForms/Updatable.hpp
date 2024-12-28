@@ -6,7 +6,7 @@
 
 namespace cf {
 
-/// Interface type for updatable objects.
+/// Base type for updatable objects.
 class Updatable : public virtual Object {
 
 protected:
@@ -23,7 +23,7 @@ public:
     }
     
     /// Do not use this constructor!
-    /// Types derived from cf::Updatable should call cf::Object(owner, name) or cf::Object(name)!
+    /// Types derived from cf::Updatable should call cf::Object(owner, name) or cf::Object(name) on their constructor!
     Updatable() {}
     
     virtual ~Updatable() {}

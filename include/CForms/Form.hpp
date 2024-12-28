@@ -244,6 +244,7 @@ public:
         return m_background;
     }
     
+    /// True if the form needs to be redrawn.
     bool IsDirty() const {
         return m_dirty;
     }
@@ -252,7 +253,7 @@ public:
     void SetTitle(const std::string& title) {
         if (m_title == title) return;
         m_title = title;
-        if (IsInitialized()) m_window.setTitle(m_title);
+        if (m_window.isOpen()) m_window.setTitle(m_title);
         TitleChanged(this, m_title);
     }
     
@@ -260,7 +261,7 @@ public:
     void SetSize(const sf::Vector2u& size) {
         if (m_size == size) return;
         m_size = size;
-        if (IsInitialized()) m_window.setSize(m_size);
+        if (m_window.isOpen()) m_window.setSize(m_size);
         SizeChanged(this, m_size);
     }
     
@@ -268,6 +269,7 @@ public:
     void SetBackground(const sf::Color& color) {
         if (m_background == color) return;
         m_background = color;
+        m_dirty = true;
         BackgroundChanged(this, m_background);
     }
     

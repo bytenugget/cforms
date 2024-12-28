@@ -197,15 +197,15 @@ public:
     }
     
     /// Do not use this constructor!
-    /// Types derived from cf::ObjectOwner should call cf::Object(owner, name) or cf::Object(name)!
+    /// Types derived from cf::ObjectOwner should call cf::Object(owner, name) or cf::Object(name) on their constructor!
     ObjectOwner(ObjectOwner* owner, const std::string& name) : Object(owner, name) {}
     
     /// Do not use this constructor!
-    /// Types derived from cf::ObjectOwner should call cf::Object(owner, name) or cf::Object(name)!
+    /// Types derived from cf::ObjectOwner should call cf::Object(owner, name) or cf::Object(name) on their constructor!
     ObjectOwner(const std::string& name) : ObjectOwner(nullptr, name) {}
     
     /// Do not use this constructor!
-    /// Types derived from cf::ObjectOwner should call cf::Object(owner, name) or cf::Object(name)!
+    /// Types derived from cf::ObjectOwner should call cf::Object(owner, name) or cf::Object(name) on their constructor!
     ObjectOwner() : ObjectOwner(nullptr, "ObjectOwner") {}
     
     virtual ~ObjectOwner() {}

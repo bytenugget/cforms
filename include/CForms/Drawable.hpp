@@ -10,7 +10,7 @@
 
 namespace cf {
 
-/// Interface type for drawable objects.
+/// Base type for drawable objects.
 class Drawable : public virtual Object {
 
 protected:
@@ -67,6 +67,14 @@ protected:
     
 public:
     
+    /// Internal Draw() call of the object.
+    virtual void __DrawCall() {
+        if (m_dirty) {
+            Draw();
+            m_dirty = false;
+        }
+    }
+    
     /// Reference pointer to the object's transform.
     virtual cf::Transform* Transform() {
         return &m_transform;
@@ -87,16 +95,8 @@ public:
         m_dirty = dirty;
     }
     
-    /// Internal Draw() call of the object.
-    virtual void __DrawCall() {
-        if (m_dirty) {
-            Draw();
-            m_dirty = false;
-        }
-    }
-    
     /// Do not use this constructor!
-    /// Types derived from cf::Drawable should call cf::Object(owner, name) or cf::Object(name)!
+    /// Types derived from cf::Drawable should call cf::Object(owner, name) or cf::Object(name) on their constructor!
     Drawable() {
         m_transform = cf::Transform({0, 0}, {60, 20});
         m_transform.__PositionChanged.Bind(&Drawable::__OnTransformPositionChanged, this);
