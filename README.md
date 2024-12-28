@@ -91,7 +91,7 @@ int main() {
 - Update(): Perform per-frame changes to the form.
 - Draw(): Draw the form/control itself.
 - Create<>(): Instantiate a child object owned by the form/control. Objects must atleast be derived from type cf::Object.
-- Delete<>(): Destroy a previously created child object owned by the form/control.
+- Delete(): Destroy a previously created child object owned by the form/control.
 
 #### Other types:
 - **cf::Object**: Base type for an object owner managed object.
