@@ -6,7 +6,7 @@ Create your own custom types derived from **cf::Form** and/or **cf::Control** an
 
 ```cpp
 /// This Example creates a custom cf::Control and cf::Form.
-/// The control with move around from left to right inside the window.
+/// The control will move around from left to right inside the window.
 
 #include "CForms/Form.hpp"
 #include "CForms/Control.hpp"
