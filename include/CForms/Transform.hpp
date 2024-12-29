@@ -12,7 +12,7 @@ class Transform {
 protected:
     
     /// Position of the transform.
-    sf::Vector2i m_position;
+    sf::Vector2f m_position;
     
     /// Size of the transform.
     sf::Vector2u m_size;
@@ -21,24 +21,24 @@ public:
     
     /// Internal event, fired when the transform position was changed, through SetPosition(), SetX() or SetY().
     /// You should subscribe to PositionChanged of a drawable object instead.
-    Event<const sf::Vector2i&> __PositionChanged;
+    Event<const sf::Vector2f&> __PositionChanged;
     
     /// Internal event, fired when the transform size was changed, through SetSize(), SetWidth() or SetHeight().
     /// You should subscribe to SizeChanged of a drawable object instead.
     Event<const sf::Vector2u&> __SizeChanged;
     
     /// Get the current position of the object's transform.
-    const sf::Vector2i& Position() const {
+    const sf::Vector2f& Position() const {
         return m_position;
     }
     
     /// Get the current x-axis position of the object's transform.
-    int X() const {
+    float X() const {
         return m_position.x;
     }
     
     /// Get the current y-axis position of the object's transform.
-    int Y() const {
+    float Y() const {
         return m_position.y;
     }
     
@@ -58,21 +58,21 @@ public:
     }
     
     /// Change the position of the object's transform.
-    void SetPosition(const sf::Vector2i& position) {
+    void SetPosition(const sf::Vector2f& position) {
         if (m_position == position) return;
         m_position = position;
         __PositionChanged(m_position);
     }
     
     /// Change the x-axis position of the object's transform.
-    void SetX(int x) {
+    void SetX(float x) {
         if (m_position.x == x) return;
         m_position.x = x;
         __PositionChanged(m_position);
     }
     
     /// Change the y-axis position of the object's transform.
-    void SetY(int y) {
+    void SetY(float y) {
         if (m_position.y == y) return;
         m_position.y = y;
         __PositionChanged(m_position);
@@ -99,13 +99,13 @@ public:
         __SizeChanged(m_size);
     }
     
-    Transform(const sf::Vector2i& position, const sf::Vector2u& size) {
+    Transform(const sf::Vector2f& position, const sf::Vector2u& size) {
         m_position = position;
         m_size = size;
     }
     
     Transform() {
-        m_position = sf::Vector2i(0.0f, 0.0f);
+        m_position = sf::Vector2f(0.0f, 0.0f);
         m_size = sf::Vector2u(20, 20);
     }
     

@@ -128,12 +128,14 @@ private:
             
             m_time.object_updates = m_clock.getElapsedTime();
             for (auto& updatable : m_updatables) {
+                if (updatable->Error() != 0U) continue;
                 updatable->__UpdateCall(m_time.cycle);
             }
             m_time.object_updates = m_clock.getElapsedTime() - m_time.object_updates;
             
             m_time.object_draws = m_clock.getElapsedTime();
             for (auto& drawable : m_drawables) {
+                if (drawable->Error() != 0U) continue;
                 if (drawable->IsDirty()) m_dirty = true;
                 drawable->__DrawCall();
             }
@@ -143,8 +145,7 @@ private:
             if (m_dirty) {
                 Draw();
                 for (auto& drawable : m_drawables) {
-                    cf::Transform* transform = drawable->Transform();
-                    if (!transform) continue;
+                    if (drawable->Error() != 0U) continue;
                     sf::Sprite sprite(drawable->Canvas()->getTexture());
                     sprite.setPosition(sf::Vector2f(drawable->Transform()->Position()));
                     m_window.draw(sprite);
@@ -155,6 +156,11 @@ private:
             m_time.form_draw = m_clock.getElapsedTime() - m_time.form_draw;
         }
         Closed(this);
+    }
+    
+    /// Internal handler call to manage position changes of drawable child objects.
+    void __OnObjectPositionChanged(Drawable*, const sf::Vector2f& position) {
+        m_dirty = true;
     }
     
     /// Internal handler call to manage created updatable and drawable objects.
@@ -172,6 +178,7 @@ private:
         if (Drawable* drawable = dynamic_cast<Drawable*>(object)) {
             Register<Drawable>(drawable);
             m_drawables.Add(drawable);
+            drawable->PositionChanged.Bind(&Form::__OnObjectPositionChanged, this);
         }
     }
     
@@ -182,13 +189,14 @@ private:
         }
         if (cf::Drawable* drawable = dynamic_cast<cf::Drawable*>(object)) {
             m_drawables.Remove(drawable);
+            drawable->PositionChanged.Unbind(&Form::__OnObjectPositionChanged, this);
         }
     }
     
 public:
     
     /// Opens the SFML window of the form.
-    void Open() {
+    virtual void Open() {
         if (!__InitCall()) {
             std::cout << "[X] Form: Failed to initialize '" + m_name + "'\n";
             return;
@@ -205,52 +213,52 @@ public:
     }
     
     /// Pointer reference to the SFML window of the form.
-    sf::RenderWindow* Window() {
+    virtual sf::RenderWindow* Window() {
         return &m_window;
     }
     
     /// Current SFML window title of the form. 
-    const std::string& Title() const {
+    virtual const std::string& Title() const {
         return m_title;
     }
     
     /// Current window position of the form.
-    const sf::Vector2i& Position() const {
+    virtual const sf::Vector2i& Position() const {
         return m_position;
     }
     
     /// Current window size of the form.
-    const sf::Vector2u& Size() const {
+    virtual const sf::Vector2u& Size() const {
         return m_size;
     }
     
     /// Current SFML style parameter of the form. 
-    const uint32_t& Style() const {
+    virtual const uint32_t& Style() const {
         return m_style;
     }
     
     /// Current maximum frames per second of the form.
-    const uint32_t& FrameLimit() const {
+    virtual const uint32_t& FrameLimit() const {
         return m_framelimit;
     }
     
     /// Current SFML context settings of the form.
-    const sf::ContextSettings& ContextSettings() const {
+    virtual const sf::ContextSettings& ContextSettings() const {
         return m_contextsettings;
     }
     
     /// Current background color of the form 
-    const sf::Color& Background() const {
+    virtual const sf::Color& Background() const {
         return m_background;
     }
     
     /// True if the form needs to be redrawn.
-    bool IsDirty() const {
+    virtual bool IsDirty() const {
         return m_dirty;
     }
     
     /// Change the SFML window title of the form.
-    void SetTitle(const std::string& title) {
+    virtual void SetTitle(const std::string& title) {
         if (m_title == title) return;
         m_title = title;
         if (m_window.isOpen()) m_window.setTitle(m_title);
@@ -258,7 +266,7 @@ public:
     }
     
     /// Change the SFML window size of the form.
-    void SetSize(const sf::Vector2u& size) {
+    virtual void SetSize(const sf::Vector2u& size) {
         if (m_size == size) return;
         m_size = size;
         if (m_window.isOpen()) m_window.setSize(m_size);
@@ -266,7 +274,7 @@ public:
     }
     
     /// Change the background color of the form.
-    void SetBackground(const sf::Color& color) {
+    virtual void SetBackground(const sf::Color& color) {
         if (m_background == color) return;
         m_background = color;
         m_dirty = true;
@@ -274,11 +282,11 @@ public:
     }
     
     /// Mark the form to be redrawn
-    void SetDirty(bool dirty = true) {
+    virtual void SetDirty(bool dirty = true) {
         m_dirty = dirty;
     }
     
-    Form(ObjectOwner* owner, const std::string& name) : ObjectOwner(owner, name) {
+    Form(ObjectOwner* owner, const std::string& name) : Object(owner, name) {
         m_title = m_name;
         m_size = sf::Vector2u(500U, 400U);
         m_style = 7U;

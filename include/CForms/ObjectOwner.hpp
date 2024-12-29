@@ -48,11 +48,27 @@ protected:
         static_assert(std::is_base_of<Object, TObject>::value, "TObject must inherit from cf::Object");
         auto it = m_objectmap.find(object->ID());
         if (it == m_objectmap.end()) {
-            std::cerr << "[X] ObjectOwner: Failed to register. '" + m_name + "' does not own object '" + object->Name() + "'.\n";
+            std::cerr << "[X] '" + m_name + "': Failed to register. Not the owner of object '" + object->Name() + "'.\n";
             return;
         }
         std::string tname = typeid(TObject).name();
         m_typemap[tname][object->ID()] = it->second;
+    }
+    
+    /// Delete an owned object.
+    bool Delete(Object* object) {
+        auto it = m_objectmap.find(object->ID());
+        if (it == m_objectmap.end()) {
+            std::cerr << "[X] '" + m_name + "': Failed to delete. Not the owner of object \'" + std::string(object->Name()) + "\'.\n";
+            return false;
+        }
+        for (auto& m: m_typemap) {
+            m.second.erase(object->ID());
+        }
+        m_objectmap.erase(object->ID());
+        ObjectDeleted(this, object);
+        m_objects.erase(m_objects.begin() + it->second);
+        return true;
     }
     
     /// Create new object of type <TObject>.
@@ -63,11 +79,11 @@ protected:
         auto& ptr = m_objects.emplace_back(std::make_unique<TObject>(this, name));
         if (!ptr) {
             // ERROR Failed to allocate/create object
-            std::cerr << "[X] ObjectOwner: Failed to allocate/create object \'" + std::string(name) + "\'.\n";
+            std::cerr << "[X] '" + m_name + "': Failed to allocate/create object \'" + std::string(name) + "\'.\n";
             return nullptr;
         }
         size_t index = m_objects.size() - 1;
-        uint64_t id = m_objects[index]->ID();
+        uint64_t id = ptr->ID();
         m_objectmap[id] = index;
         std::string tname = typeid(TObject).name();
         m_typemap[tname][id] = index;
@@ -75,27 +91,12 @@ protected:
         ObjectCreated(this, object);
         if (!object->__InitCall()) {
             // ERROR Failed to initialize the object
+            std::cerr << "[X] '" + m_name + "': Failed to initialize object \'" + std::string(name) + "\'.\n";
             Delete(object);
             return nullptr;
         }
         ObjectInitialized(this, object);
         return dynamic_cast<TObject*>(object);
-    }
-    
-    /// Delete an owned object.
-    bool Delete(Object* object) {
-        auto it = m_objectmap.find(object->ID());
-        if (it == m_objectmap.end()) {
-            return false;
-        }
-        for (auto& m: m_typemap) {
-            if (m.second.erase(object->ID()) > 0)
-                break;
-        }
-        m_objectmap.erase(object->ID());
-        ObjectDeleted(this, object);
-        m_objects.erase(m_objects.begin() + it->second);
-        return true;
     }
     
 public:
@@ -114,6 +115,14 @@ public:
         else {
             return m_objects[it->second].get();
         }
+    }
+    
+    /// Get object by Name.
+    Object* Get(const std::string& name) {
+        for (auto& obj : m_objects) {
+            if (obj->Name() == name) return obj.get();
+        }
+        return nullptr;
     }
     
     /// Get all object of type <TObject>.
@@ -198,15 +207,7 @@ public:
     
     /// Do not use this constructor!
     /// Types derived from cf::ObjectOwner should call cf::Object(owner, name) or cf::Object(name) on their constructor!
-    ObjectOwner(ObjectOwner* owner, const std::string& name) : Object(owner, name) {}
-    
-    /// Do not use this constructor!
-    /// Types derived from cf::ObjectOwner should call cf::Object(owner, name) or cf::Object(name) on their constructor!
-    ObjectOwner(const std::string& name) : ObjectOwner(nullptr, name) {}
-    
-    /// Do not use this constructor!
-    /// Types derived from cf::ObjectOwner should call cf::Object(owner, name) or cf::Object(name) on their constructor!
-    ObjectOwner() : ObjectOwner(nullptr, "ObjectOwner") {}
+    ObjectOwner() {}
     
     virtual ~ObjectOwner() {}
     

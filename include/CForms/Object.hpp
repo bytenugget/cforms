@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Event.hpp"
+
 #include <SFML/System.hpp>
 #include <string>
 #include <random>
@@ -21,6 +23,14 @@ protected:
     
     /// Name of the object. Should be unique to its owner!
     std::string m_name;
+    
+    /// Error state of the object. If greater than 0, the object will be locked out of application cycle.
+    uint32_t m_error;
+    
+public:
+    
+    /// Fired if the object encountered an error.
+    Event<Object*, const uint32_t&> ErrorEncoutered;
     
 private:
     
@@ -45,6 +55,7 @@ public:
     virtual bool __InitCall() {
         if (m_initialized) return true;
         if (!Init()) return false;
+        m_initialized = true;
         return true;
     }
     
@@ -68,6 +79,11 @@ public:
         return m_name;
     }
     
+    /// Error state of the object. If greater than 0, the object will be locked out of application cycle.
+    const uint32_t& Error() const {
+        return m_error;
+    }
+    
     /// Change the name of the object.
     void SetName(const std::string& name) {
         m_name = name;
@@ -78,6 +94,7 @@ public:
         m_id = __GenerateRuntimeID();
         m_owner = owner;
         m_name = name;
+        m_error = 0U;
     }
     
     /// Do not use constructors to create an object! Instead, use Create() from the object owner.

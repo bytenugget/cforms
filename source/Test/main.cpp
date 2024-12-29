@@ -22,19 +22,22 @@ protected:
     }
     
     virtual void Update(const sf::Time& delta) override {
-        if (m_transform.Position().x <= 10.0f)
+        if (m_transform.Position().x == 10.0f)
             m_goright = true;
-        else if (m_transform.Position().x >= 370.0f)
+        else if (m_transform.Position().x == 370.0f)
             m_goright = false;
         
-        int move = (int)(delta.asSeconds() * m_speed);
+        float move = delta.asSeconds() * m_speed;
         
         if (m_goright)
             m_transform.SetX(m_transform.Position().x + move);
         else
             m_transform.SetX(m_transform.Position().x - move);
         
-        m_dirty = true;
+        if (m_transform.Position().x < 10.0f)
+            m_transform.SetX(10.0f);
+        else if (m_transform.Position().x > 370.0f)
+            m_transform.SetX(370.0f);
     }
     
 public:
@@ -52,7 +55,7 @@ protected:
         for (int i=0; i < 13; i++) {
             TestControl* c = Create<TestControl>("TestControl" + std::to_string(i));
             if (!c) return false;
-            c->Transform()->SetPosition({10 + 30 * i, 10 + 30 * i});
+            c->Transform()->SetPosition({10.0f + 30.0f * i, 10.0f + 30.0f * i});
         }
         
         return true;

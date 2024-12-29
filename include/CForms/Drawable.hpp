@@ -29,7 +29,7 @@ public:
     /// Fired when the object's transform position was changed, through Transform().
     /// @param sender Object which fired the event.
     /// @param position New transform position.
-    Event<Drawable*, const sf::Vector2i&> PositionChanged;
+    Event<Drawable*, const sf::Vector2f&> PositionChanged;
     
     /// Fired when the object's transform size was changed, through Transform().
     /// @param sender Object which fired the event.
@@ -39,13 +39,19 @@ public:
 private:
     
     /// Internal handler call to report changes of the object's transform position.
-    void __OnTransformPositionChanged(const sf::Vector2i& position) {
+    void __OnTransformPositionChanged(const sf::Vector2f& position) {
         PositionChanged(this, position);
     }
     
     /// Internal handler call to report changes of the object's transform size.
     void __OnTransformSizeChanged(const sf::Vector2u& size) {
-        m_canvas.create(size.x, size.y);
+        if (!m_canvas.create(size.x, size.y)) {
+            std::cout << "[X] '" + m_name + "': Failed to recreate object canvas, after size change.\n";
+            m_error = 2U;
+            ErrorEncoutered(this, m_error);
+            return;
+        }
+        m_dirty = true;
         SizeChanged(this, size);
     }
     
@@ -56,7 +62,7 @@ protected:
     virtual bool Init() override {
         if (!m_canvas.create(m_transform.Width(), m_transform.Height())) {
             // ERROR Failed to create canvas
-            std::cerr << "[X] Drawable: Failed to create canvas\n";
+            std::cerr << "[X] '" + m_name + "': Failed to create canvas\n";
             return false;
         }
         return true;

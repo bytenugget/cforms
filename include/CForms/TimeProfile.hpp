@@ -31,12 +31,12 @@ struct TimeProfile {
     /// Formatted multi-line string representation.
     std::string ToString() {
         return StringF(
-            "Cycle: %7lld\nWindow: %6lld\nUpdate: %6lld\nDraw: %8lld\nSpare: %7lld",
-            cycle.asMicroseconds(),
-            window_events.asMicroseconds(),
-            form_update.asMicroseconds() + object_updates.asMicroseconds(),
-            form_draw.asMicroseconds() + object_draws.asMicroseconds(),
-            (sf::seconds(1.0f) - cycle).asMicroseconds()
+            "Cycle: %8.5f\nWindow: %6.5f\nUpdate: %6.5f\nDraw: %9.5f\nFPS: %10.5f",
+            cycle.asSeconds(),
+            window_events.asSeconds(),
+            form_update.asSeconds() + object_updates.asSeconds(),
+            form_draw.asSeconds() + object_draws.asSeconds(),
+            1.0f / cycle.asSeconds()
         );
     }
     

@@ -34,8 +34,13 @@ public:
     
 private:
     
-    /// Internal handler call to manage created updatable and drawable objects.
-    virtual void __OnObjectCreated(ObjectOwner* sender, Object*& object) {
+    /// Internal handler call to manage position changes of drawable child objects.
+    void __OnObjectPositionChanged(Drawable*, const sf::Vector2f& position) {
+        m_dirty = true;
+    }
+    
+    /// Internal handler call to manage created updatable and drawable child objects.
+    void __OnObjectCreated(ObjectOwner* sender, Object*& object) {
         if (ObjectOwner* owner = dynamic_cast<ObjectOwner*>(object)) {
             Register<ObjectOwner>(owner);
         }
@@ -49,16 +54,18 @@ private:
         if (cf::Drawable* drawable = dynamic_cast<cf::Drawable*>(object)) {
             Register<Drawable>(drawable);
             m_drawables.Add(drawable);
+            drawable->PositionChanged.Bind(&Control::__OnObjectPositionChanged, this);
         }
     }
     
-    /// Internal handler call to manage deleted updatable and drawable objects.
-    virtual void __OnObjectDeleted(ObjectOwner* sender, Object*& object) {
+    /// Internal handler call to manage deleted updatable and drawable child objects.
+    void __OnObjectDeleted(ObjectOwner* sender, Object*& object) {
         if (cf::Updatable* updatable = dynamic_cast<cf::Updatable*>(object)) {
             m_updatables.Remove(updatable);
         }
         if (cf::Drawable* drawable = dynamic_cast<cf::Drawable*>(object)) {
             m_drawables.Remove(drawable);
+            drawable->PositionChanged.Unbind(&Control::__OnObjectPositionChanged, this);
         }
     }
     
@@ -83,21 +90,22 @@ public:
     virtual void __UpdateCall(const sf::Time& delta) override {
         Update(delta);
         for (auto& updatable : m_updatables) {
+            if (updatable->Error() != 0U) continue;
             updatable->__UpdateCall(delta);
         }
     }
     
     /// Internal Draw() call of the control.
     virtual void __DrawCall() override {
+        for (auto& drawable : m_drawables) {
+            if (drawable->Error() != 0U) continue;
+            if (drawable->IsDirty()) m_dirty = true;
+            drawable->__DrawCall();
+        }
         if (m_dirty) {
-            for (auto& drawable : m_drawables) {
-                if (drawable->IsDirty()) m_dirty = true;
-                drawable->__DrawCall();
-            }
             Draw();
             for (auto& drawable : m_drawables) {
-                cf::Transform* transform = drawable->Transform();
-                if (!transform) continue;
+                if (drawable->Error() != 0U) continue;
                 sf::Sprite sprite(drawable->Canvas()->getTexture());
                 sprite.setPosition(sf::Vector2f(drawable->Transform()->Position()));
                 m_canvas.draw(sprite);
