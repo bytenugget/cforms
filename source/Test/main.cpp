@@ -65,7 +65,9 @@ protected:
     
 public:
     
-    TestForm() : cf::Object("TestForm") {} // Issue: This constructor call does happen tho.
+    TestForm() : cf::Object("TestForm") { // Issue: This constructor call does happen tho.
+        m_plotstats = true; // set this false to hide statistics in the console. (statistics overwrite error messages)
+    }
     
 };
 

@@ -55,6 +55,9 @@ protected:
     /// Dirty state of the form. If true at draw time, the form will be redrawn.
     bool m_dirty;
     
+    /// Form statistics plotting. If true, statistics about the form will be printed to the console.
+    bool m_plotstats;
+    
 public:
     
     /// Fired when the form was opened.
@@ -99,18 +102,19 @@ private:
     /// Internal operating loop of the form.
     void __Loop() {
         Opened(this);
-        std::cout << "Time Profile '" + m_name + "':\n\n\n\n\n\n\n";
+        if (m_plotstats) std::cout << "Time Profile '" + m_name + "':\n\n\n\n\n\n\n";
         sf::Time print;
         m_clock.restart();
         while (m_window.isOpen()) {
             m_time.cycle = m_clock.restart();
-            print += m_time.cycle;
-            if (print.asSeconds() > 1.0f / 4.0f) {
-                std::cout << "\e[6F\e[0J" << m_time.ToString() << "\n";
-                std::cout << "Objects: " << ObjectCount() << ", Updatables: " << m_updatables.Count() << ", Drawables: " << m_drawables.Count() << "\n";
-                print = {};
+            if (m_plotstats) {
+                print += m_time.cycle;
+                if (print.asSeconds() > 1.0f / 4.0f) {
+                    std::cout << "\e[6F\e[0J" << m_time.ToString() << "\n";
+                    std::cout << "Objects: " << ObjectCount() << ", Updatables: " << m_updatables.Count() << ", Drawables: " << m_drawables.Count() << "\n";
+                    print = {};
+                }
             }
-            
             m_time.window_events = m_clock.getElapsedTime();
             while (m_window.pollEvent(m_window_event)) {
                 if (m_window_event.type == sf::Event::Closed) {
@@ -302,6 +306,7 @@ public:
         );
         m_background = sf::Color(0x000000FF);
         m_dirty = true;
+        m_plotstats = false;
         ObjectCreated.Bind(&cf::Form::__OnObjectCreated, this);
         ObjectDeleted.Bind(&cf::Form::__OnObjectDeleted, this);
     }
