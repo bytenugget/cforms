@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+// Test control which is supposed to move left and right inside the window
 class TestControl : public cf::Control {
 
 private:
@@ -46,11 +47,12 @@ public:
     
 };
 
+// Test form which is supposed to create the window and 13 test controls
 class TestForm : public cf::Form {
 
 protected:
     
-    virtual bool Init() override {
+    virtual bool Init() override { // Issue: this override is not executed on a shared libraries build
         m_size = sf::Vector2u({400, 400});
         for (int i=0; i < 13; i++) {
             TestControl* c = Create<TestControl>("TestControl" + std::to_string(i));
@@ -63,7 +65,7 @@ protected:
     
 public:
     
-    TestForm() : cf::Object("TestForm") {}
+    TestForm() : cf::Object("TestForm") {} // Issue: This constructor call does happen tho.
     
 };
 
