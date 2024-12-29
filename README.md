@@ -37,13 +37,13 @@ protected:
     
     virtual void Update(const sf::Time& delta) override {
         // which way to go?
-        if (m_transform.Position().x <= 10.0f)
+        if (m_transform.Position().x == 10.0f)
             m_goright = true;
-        else if (m_transform.Position().x >= 370.0f)
+        else if (m_transform.Position().x == 370.0f)
             m_goright = false;
         
         // match speed with fps
-        int move = (int)(delta.asSeconds() * m_speed);
+        float move = delta.asSeconds() * m_speed;
         
         // move the control
         if (m_goright)
