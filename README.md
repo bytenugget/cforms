@@ -36,19 +36,26 @@ protected:
     }
     
     virtual void Update(const sf::Time& delta) override {
+        // which way to go?
         if (m_transform.Position().x <= 10.0f)
             m_goright = true;
         else if (m_transform.Position().x >= 370.0f)
             m_goright = false;
         
+        // match speed with fps
         int move = (int)(delta.asSeconds() * m_speed);
         
+        // move the control
         if (m_goright)
             m_transform.SetX(m_transform.Position().x + move);
         else
             m_transform.SetX(m_transform.Position().x - move);
         
-        m_dirty = true; // we set the control "dirty" to signal that it needs to be redrawn. The owner will redraw aswell.
+        // clamp to make it steady
+        if (m_transform.Position().x < 10.0f)
+            m_transform.SetX(10.0f);
+        else if (m_transform.Position().x > 370.0f)
+            m_transform.SetX(370.0f);
     }
     
 public:
